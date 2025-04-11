@@ -8,7 +8,8 @@
 
 A beautiful TV show discovery application with gradient UI, built with modern web technologies.
 
-![App Screenshot](https://i.imgur.com/JqYeZ5l.png)
+![App Screenshot](![image](https://github.com/user-attachments/assets/ad85e300-b5ad-4cc8-adf7-355b78828c44)
+)
 *Show details page with cast information*
 
 ## ✨ Features
@@ -18,7 +19,6 @@ A beautiful TV show discovery application with gradient UI, built with modern we
 - **Responsive Design** - Works on all device sizes
 - **Show Details** - View comprehensive show information
 - **Cast Profiles** - See actor information and photos
-- **Smooth Transitions** - Animated route transitions
 - **Dark Mode** - Eye-friendly dark theme option
 
 ## 🛠️ Tech Stack
