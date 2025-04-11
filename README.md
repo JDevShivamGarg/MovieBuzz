@@ -8,10 +8,8 @@
 
 A beautiful TV show discovery application with gradient UI, built with modern web technologies.
 
-![App Screenshot](![image](https://github.com/user-attachments/assets/ad85e300-b5ad-4cc8-adf7-355b78828c44)
-)
+![App Screenshot](https://github.com/user-attachments/assets/ad85e300-b5ad-4cc8-adf7-355b78828c44)
 *Show details page with cast information*
-
 ## ✨ Features
 
 - **Gradient UI** - Stunning `bg-gradient-to-br from-blue-300 to-purple-400` background
