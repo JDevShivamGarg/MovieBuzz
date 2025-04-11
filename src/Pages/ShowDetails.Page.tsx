@@ -1,24 +1,28 @@
 import { FC, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, Link } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
 import CastCard from "../Components/CastCard";
 import GenrePill from "../Components/GenrePill";
-import withRouter, { WithRouterProps } from "../hocs/withRouter";
-import { IoArrowBack } from "react-icons/io5"
-import { Link } from "react-router-dom";
-import { State } from "../store";
-import { fetchCastDetails, fetchShowDetails } from "../actions/Show";
-import { connect, ConnectedProps } from "react-redux";
+import { fetchCastDetails, fetchShowDetails } from "../thunks";
+import { RootState , AppDispatch} from "../store";
 
-type ShowDetailPageProps = WithRouterProps & ReduxProps
+const ShowDetailPage: FC = () => {
+  const { showId } = useParams<{ showId: string }>();
+  const dispatch = useDispatch<AppDispatch>();
 
-const ShowDetailPage: FC<ShowDetailPageProps> = ({ params, fetchShowDetails, showDetails, error, fetchCastDetails, castDetails }) => {
-  const showId = params.showId;
+  const { showDetails, error, castDetails } = useSelector((state: RootState) => ({
+    showDetails: state.shows.showDetails,
+    error: state.shows.error,
+    castDetails: state.shows.castDetails,
+  }));
 
   useEffect(() => {
-
-    fetchShowDetails(showId);
-    fetchCastDetails(showId);
-  }, [showId, fetchShowDetails, fetchCastDetails]);
-
+    if (showId) {
+      dispatch(fetchShowDetails(showId));
+      dispatch(fetchCastDetails(showId));
+    }
+  }, [showId, dispatch]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -27,13 +31,19 @@ const ShowDetailPage: FC<ShowDetailPageProps> = ({ params, fetchShowDetails, sho
   if (!showDetails) {
     return <div>Loading...</div>;
   }
-  const imagePlaceholder = "https://incakoala.github.io/top9movie/film-poster-placeholder.png"
+
+  const imagePlaceholder = "https://incakoala.github.io/top9movie/film-poster-placeholder.png";
+
+  const uniqueCastDetails = castDetails.filter((castMember, index, self) =>
+    index === self.findIndex((t) => t.id === castMember.id)
+  );
+
   return (
-    <div className="mt-2">
-      <Link className="flex items-center" to='/'><IoArrowBack />Back</Link>
+    <div>
+      <Link className="flex items-center" to="/"><IoArrowBack />Back</Link>
       <h2 className="text-4xl font-semibold tracking-wide">{showDetails.name}</h2>
       <div className="flex space-x-3 my-2 bg-gray-300 p-2 rounded-sm">
-        {showDetails.genres.map((genre: string, index: number) => (
+        {showDetails.genres.map((genre, index) => (
           <GenrePill key={index} name={genre} />
         ))}
       </div>
@@ -45,8 +55,7 @@ const ShowDetailPage: FC<ShowDetailPageProps> = ({ params, fetchShowDetails, sho
           className="object-cover object-center w-full rounded-t-md h-72"
         />
         <div className="ml-2">
-          <p dangerouslySetInnerHTML={{ __html: showDetails.summary || "" }}>
-          </p>
+          <p dangerouslySetInnerHTML={{ __html: showDetails.summary || "" }}></p>
           <p className="mt-2 text-lg font-bold border border-gray-700 rounded-md px-2 py-1 max-w-max">
             Rating: <span className="text-gray-700">{showDetails.rating.average}/10</span>
           </p>
@@ -55,8 +64,8 @@ const ShowDetailPage: FC<ShowDetailPageProps> = ({ params, fetchShowDetails, sho
 
       <div className="mt-2">
         <h4 className="text-2xl font-semibold tracking-wide">Cast</h4>
-        <div className="flex flex-wrap ">
-          {castDetails.map((castMember) => (
+        <div className="flex flex-wrap">
+          {uniqueCastDetails.map((castMember) => (
             <CastCard
               key={castMember.id}
               avatarLink={castMember.image?.medium || imagePlaceholder}
@@ -69,24 +78,4 @@ const ShowDetailPage: FC<ShowDetailPageProps> = ({ params, fetchShowDetails, sho
   );
 };
 
-
-const mapStateToProps = (state: State) => ({
-  showDetails: state.shows.showDetails,
-  error: state.shows.error,
-  castDetails: state.shows.castDetails
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-  fetchShowDetails: (showId: string) => {
-    dispatch(fetchShowDetails(showId));
-  },
-  fetchCastDetails: (showId: string) => {
-    dispatch(fetchCastDetails(showId));
-  }
-});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type ReduxProps = ConnectedProps<typeof connector>
-
-export default connector(withRouter(ShowDetailPage));
+export default ShowDetailPage;
